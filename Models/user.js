@@ -33,22 +33,26 @@ let userSchema = new mongoose.Schema({
     token: {
         type: String
     },
-    state: {
-        type: String,
-        required: true
-    },
-    city: {
-        type: String,
-        required: true
-    },
-    pincode: {
-        type: String,
-        required: true
-    },
-    address: {
-        type: String,
-        required: true
-    }
+    addresses: [
+        {
+            state: {
+                type: String,
+                required: true
+            },
+            city: {
+                type: String,
+                required: true
+            },
+            pincode: {
+                type: String,
+                required: true
+            },
+            address: {
+                type: String,
+                required: true
+            }
+        }
+    ]
 });
 
 userSchema.plugin(timestamp);
@@ -76,7 +80,8 @@ userSchema.methods.generateToken = async function (next) {
 
 userSchema.statics.findByToken = async function (token, next) {
     jwt.verify(token, configuration.jwtSecretKey, function (err, decode) {
-        this.findOne({ "_id": decode, "token": token}, function (err, user) {
+        if(err) return next(err);
+        UserModel.findOne({ _id: decode.id, token: token}, function (err, user) {
            if(err) return next(err) ;
            next(null, user);
         });
