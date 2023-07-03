@@ -49,6 +49,24 @@ addressRoute.post('/setdefaultaddress', ChangeDefaultAddress, AddressValidationC
     });
 });
 
+addressRoute.post('/setdefaultaddress', ChangeDefaultAddress, AddressValidationCheck, async (req, res, next) => {
+    User.findOneAndUpdate({ _id: req.user._id, "addresses.isSelected": true}, { '$set': { "addresses.$.isSelected": false }}, function (err, user) {
+        if(err) {
+            console.log(err);
+            return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson());
+        }
+        User.findOneAndUpdate({ _id: req.user._id, "addresses._id": req.body.addressId }, { '$set': { "addresses.$.isSelected": true }}, function (err, user) {
+            if(err) {
+                return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson());
+            }
+            if(!user) {
+                return res.status(404).json(new JSONResponse(Constants.ErrorMessages.AddressNotFound).getJson());
+            }
+            return res.json(new JSONResponse(null, Constants.SuccessMessages.ChangedDefaultAddress).getJson());
+        });
+    });
+});
+
 addressRoute.get('/', AddressValidationCheck, async (req, res, next) => {
     res.json(req.user.addresses);
 });

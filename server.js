@@ -2,6 +2,7 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const passport = require('passport');
+const multer = require('multer');
 
 // import custom modules
 const configuration = require('./config');
@@ -23,8 +24,8 @@ app.use(passport.initialize());
 app.use('/meal', mealRoute);
 app.use('/auth', authenticationRoutes);
 app.use('/address', addressRoute);
-
-// start sever
-app.listen(port, function() {
-    logger.info(`App running on port ${port}`)
+    
+    // start sever
+    app.listen(port, function() {
+        logger.info(`App running on port ${port}`)
 });
