@@ -8,19 +8,19 @@ const configuration = require('./config');
 const {logger} = require('./Config/winston');
 const authenticationRoutes = require('./Routes/Routes');
 const addressRoute = require('./Routes/Address');
-require('./database');
+const mealRoute = require('./Routes/Meal');
 
 dotenv.config();
 
 const port = process.env.PORT;
 const app = express();
 
-
 // middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
+app.use('/meal', mealRoute);
 app.use('/auth', authenticationRoutes);
 app.use('/address', addressRoute);
 

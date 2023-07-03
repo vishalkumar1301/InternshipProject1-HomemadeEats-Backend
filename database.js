@@ -1,4 +1,8 @@
 const mongoose = require('mongoose')
+const gridFSStorage = require('multer-gridfs-storage');
+const crypto = require('crypto');
+const path = require('path');
+
 const {configuration} = require('./config');
 const {logger} = require('./Config/winston');
 
@@ -23,3 +27,18 @@ class Database {
 }
 
 module.exports = new Database();
+module.exports = {
+    storage: new gridFSStorage({  
+        url: server,  
+        file: (req, file) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if(err) return err;
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                return {      
+                        bucketName: 'Images',       
+                        filename: filename
+                }  
+            })
+       }
+    })
+}
