@@ -4,12 +4,9 @@ const addressRoute = express.Router();
 const User = require('../Models/user');
 const { AddressValidationRule } = require('../Validations/Rules/Address');
 const { AddressValidationCheck } = require('../Validations/Checks/Address');
-const { verifyLocalToken } = require('../Authentication/verifyLocalToken');
 const { Constants } = require('../constants');
 const { JSONResponse } = require('../Constants/Response');
 const { ChangeDefaultAddress } = require('../Validations/Rules/ChangeDefaultAddress');
-
-addressRoute.use(verifyLocalToken);
 
 addressRoute.post('/', AddressValidationRule, AddressValidationCheck, async (req, res, next) => { 
     User.findOneAndUpdate({ _id: req.user._id, "addresses.isSelected": true}, { '$set': { "addresses.$.isSelected": false }}, function (err, user) {
@@ -34,25 +31,6 @@ addressRoute.post('/', AddressValidationRule, AddressValidationCheck, async (req
 addressRoute.post('/setdefaultaddress', ChangeDefaultAddress, AddressValidationCheck, async (req, res, next) => {
     User.findOneAndUpdate({ _id: req.user._id, "addresses.isSelected": true}, { '$set': { "addresses.$.isSelected": false }}, function (err, user) {
         if(err) {
-            console.log(err);
-            return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson());
-        }
-        User.findOneAndUpdate({ _id: req.user._id, "addresses._id": req.body.addressId }, { '$set': { "addresses.$.isSelected": true }}, function (err, user) {
-            if(err) {
-                return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson());
-            }
-            if(!user) {
-                return res.status(40).json(new JSONResponse(Constants.ErrorMessages.AddressNotFound).getJson());
-            }
-            return res.json(new JSONResponse(null, Constants.SuccessMessages.ChangedDefaultAddress).getJson());
-        });
-    });
-});
-
-addressRoute.post('/setdefaultaddress', ChangeDefaultAddress, AddressValidationCheck, async (req, res, next) => {
-    User.findOneAndUpdate({ _id: req.user._id, "addresses.isSelected": true}, { '$set': { "addresses.$.isSelected": false }}, function (err, user) {
-        if(err) {
-            console.log(err);
             return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson());
         }
         User.findOneAndUpdate({ _id: req.user._id, "addresses._id": req.body.addressId }, { '$set': { "addresses.$.isSelected": true }}, function (err, user) {
