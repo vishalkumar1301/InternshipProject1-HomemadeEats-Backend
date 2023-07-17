@@ -8,9 +8,11 @@ const mongoose = require('mongoose');
 const configuration = require('./config');
 const {logger} = require('./Config/winston');
 const { verifyLocalToken } = require('./Authentication/verifyLocalToken');
+const { verifyLocalToken } = require('./Authentication/verifyLocalToken');
 const authenticationRoutes = require('./Routes/Routes');
 const addressRoute = require('./Routes/Address');
 const mealRoute = require('./Routes/Meal');
+require('./database');
 require('./database');
 
 dotenv.config();
@@ -24,9 +26,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
 app.use('/auth', authenticationRoutes);
-
-app.use(verifyLocalToken);
-app.use('/', mealRoute);
 app.use('/address', addressRoute);
 
 app.use('/image', function (req, res) {

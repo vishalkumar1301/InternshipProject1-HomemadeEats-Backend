@@ -4,11 +4,15 @@ const multer = require('multer');
 const mealRoute = express.Router();
 const { Constants } = require('../constants')
 const { JSONResponse } = require('../Constants/Response');
+const mealRoute = express.Router();
+const { Constants } = require('../constants')
+const { JSONResponse } = require('../Constants/Response');
 const { storage } = require('../database');
 const { mealValidation } = require('../Validations/CustomValidation/meal');
 const Meal = require('../Models/meal');
 const {logger} = require('../Config/winston');
 
+var upload = multer({ storage: storage })
 var upload = multer({ storage: storage })
 
 mealRoute.post('/meal', upload.array('photos', 4), function (req, res) {
