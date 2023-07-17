@@ -21,7 +21,7 @@ class Constants {
         ProvideCity: 'Provide city',
         ProvidePincode: 'Provide pincode',
         ProvideAddresss: 'Provide address',
-        UserTypeCanOnlyBe123: 'User type can only be 1, 2 or 3',
+        UserTypeCanOnlyBe012: 'User type can only be 0, 1 or 2',
         ProvideLandmark: 'Provide landmark',
         ProvideSelectedType: 'Provide selected type',
         ProvideLatitude: 'Provide latitude',
@@ -33,14 +33,26 @@ class Constants {
         WorkIsAlreadySelected: 'Work is already selected',
         ProvideAddressId: 'Provide address id',
         AddressNotFound: 'Address not found',
-        AddressIdShouldBe24CharactersLong: 'Address Id should be 24 charachter long'
+        AddressIdShouldBe24CharactersLong: 'Address Id should be 24 charachter long',
+        ProvideMeals: 'Provide meals',
+        ProvideMealName: 'Provide meal name',
+        ProvideMealDescription: 'Provide meal description',
+        ValueShouldBeInteger: 'Value should be integer',
+        ProvideDescription: 'Provide description',
+        ProvidePrice: 'Provide price',
+        ProvideMealType: 'Provide meal type',
+        ValueShouldBeBreakfastLunchOrDinner: 'Value should be Breakfast lunch or dinner',
+        ProvideJSONData: 'Provide stringify json data',
+        InvalidToken: 'Invalid token',
+        DummyError: 'dummy error'
     };
     static SuccessMessages = {
         SignupSuccessfull: 'Signup Successfull',
         SigninSuccessfull: 'Signin Successfull',
         AddressAddedSuccessfully: 'Address added successfully',
         AddressAlreadyExists: 'Address already exists',
-        ChangedDefaultAddress: 'Changed default address'
+        ChangedDefaultAddress: 'Changed default address',
+        BreakfastAdded: 'Breakfast Added'
     };
     static AddressType = {
         Work: 'Work',

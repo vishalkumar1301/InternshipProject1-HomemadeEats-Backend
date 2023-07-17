@@ -1,28 +1,59 @@
 const express = require('express');
 const multer = require('multer');
 
-const { storage } = require('../database');
-
 const mealRoute = express.Router();
+const { Constants } = require('../constants')
+const { JSONResponse } = require('../Constants/Response');
+const { storage } = require('../database');
+const { mealValidation } = require('../Validations/CustomValidation/meal');
+const Meal = require('../Models/meal');
+const {logger} = require('../Config/winston');
 
-var fileNameMiddleware = multer.diskStorage({
-    filename: function (req, file, cb) {
-        crypto.randomBytes(16, (err, buf) => {
-            if(err) return err;
-            const filename = buf.toString('hex') + path.extname(file.originalname);
-            cb(null, filename);
-        })
+var upload = multer({ storage: storage })
+
+mealRoute.post('/meal', upload.array('photos', 4), function (req, res) {
+    // validation check
+    var error = mealValidation(req, res)
+    if(error) {
+        return error;
     }
+
+    let meal = new Meal();
+    meal.dishes = req.body.meal.map(i => {
+        return {
+            name: i.name,
+            description: i.description
+        }
+    });
+    
+    meal.cook = req.user._id;
+    meal.images = req.files.map(file => file.filename);
+    meal.date = Date.now();;
+    meal.price = req.body.price;
+    meal.mealType = req.body.mealType;
+
+    meal.save(function (err) {
+        if(err) {
+            logger.error(err);
+            return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson());
+        }
+        return res.json(new JSONResponse(null, req.body.mealType + ' Added').getJson());
+    });
 });
 
-var fileNameMiddleware = multer({ storage: fileNameMiddleware });
-var upload = multer({    
-    storage: storage  
-}).array('photos', 4);
-
-mealRoute.post('/breakfast', fileNameMiddleware.array('photos', 4), upload, function (req, res) {
-    console.log(req.files);
-    res.send(req.body);
-});
+mealRoute.get('/meal', function (req, res) {
+    Meal.find({isAvailable: true}).populate({
+        path: 'cook',
+        select: '-password -userType -updatedAt -createdAt -__v -token',
+        populate: {
+            path: "addresses",
+            match: {
+                isSelected: true
+            }
+        }
+    }).select('-updatedAt -createdAt -__v').exec(function (err, users) {
+        return res.send(users);
+    })
+})
 
 module.exports = mealRoute;

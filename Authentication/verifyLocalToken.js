@@ -11,15 +11,15 @@ let verifyLocalToken = (req, res, next) => {
         req.token = bearerToken;
     } else {
         // Forbidden
-        return res.status(499).json(new JSONResponse(Constants.ErrorMessages.UserUnAuthorized).getJson());
+        return res.status(401).json(new JSONResponse(Constants.ErrorMessages.InvalidToken).getJson());
     }
     
     User.findByToken(req.token, (err, user) => {
         if (err) {
-            return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson())
+            return res.status(401).json(new JSONResponse(Constants.ErrorMessages.InvalidToken).getJson())
         }
         if(!user) {
-            return res.status(401).json(new JSONResponse(Constants.ErrorMessages.UserUnAuthorized).getJson());
+            return res.status(401).json(new JSONResponse(Constants.ErrorMessages.InvalidToken).getJson());
         }
         req.user = user;
         next();
