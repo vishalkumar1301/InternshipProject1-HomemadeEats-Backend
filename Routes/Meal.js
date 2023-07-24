@@ -4,15 +4,12 @@ const multer = require('multer');
 const mealRoute = express.Router();
 const { Constants } = require('../constants')
 const { JSONResponse } = require('../Constants/Response');
-const mealRoute = express.Router();
-const { Constants } = require('../constants')
-const { JSONResponse } = require('../Constants/Response');
 const { storage } = require('../database');
 const { mealValidation } = require('../Validations/CustomValidation/meal');
 const Meal = require('../Models/meal');
 const {logger} = require('../Config/winston');
+const User = require('../Models/user');
 
-var upload = multer({ storage: storage })
 var upload = multer({ storage: storage })
 
 mealRoute.post('/meal', upload.array('photos', 4), function (req, res) {
@@ -30,15 +27,17 @@ mealRoute.post('/meal', upload.array('photos', 4), function (req, res) {
         }
     });
     
-    meal.cook = req.user._id;
+    meal.cookId = req.user._id;
     meal.images = req.files.map(file => file.filename);
     meal.date = Date.now();;
     meal.price = req.body.price;
     meal.mealType = req.body.mealType;
+    meal.dishNames += meal.dishes.map(dish => {
+        return dish.name + dish.description;
+    });
 
     meal.save(function (err) {
         if(err) {
-            logger.error(err);
             return res.status(500).json(new JSONResponse(Constants.ErrorMessages.InternalServerError).getJson());
         }
         return res.json(new JSONResponse(null, req.body.mealType + ' Added').getJson());
@@ -46,17 +45,47 @@ mealRoute.post('/meal', upload.array('photos', 4), function (req, res) {
 });
 
 mealRoute.get('/meal', function (req, res) {
-    Meal.find({isAvailable: true}).populate({
-        path: 'cook',
-        select: '-password -userType -updatedAt -createdAt -__v -token',
-        populate: {
-            path: "addresses",
-            match: {
-                isSelected: true
+    let dishName = req.query.dishName;
+    Meal.aggregate([
+        {
+            $match: {
+                "dishNames": { $regex: dishName, $options: "i" },
+                isAvailable: true
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "cookId",
+                foreignField: "_id",
+                as: "cook"
+            }
+        },
+        {
+            $unwind: "$cook"
+        },
+        {
+            $unwind: "$cook.addresses"
+        }, 
+        {
+            $match: {
+                "cook.addresses.isSelected": true
+            }
+        }, 
+        {
+            $project: {
+                _id: 0,
+                dishes: 1,
+                price: 1,
+                mealType: 1,
+                images: 1,
+                cookFirstName: "$cook.firstName",
+                cookLastName: "$cook.lastName",
+                cookAddress: "$cook.addresses",
             }
         }
-    }).select('-updatedAt -createdAt -__v').exec(function (err, users) {
-        return res.send(users);
+    ]).exec(function (err, result) {
+        res.send(result);
     })
 })
 

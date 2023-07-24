@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const timestamp = require('./TimeStamp');
 
 let cookMealSchema = new mongoose.Schema({
+    dishNames : {
+        type: String,
+        required: true,
+        default: ''
+    },
     dishes: [
         {
             name: {
@@ -15,7 +20,7 @@ let cookMealSchema = new mongoose.Schema({
             }
         }
     ],
-    cook: {
+    cookId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -44,4 +49,5 @@ let cookMealSchema = new mongoose.Schema({
 });
 
 cookMealSchema.plugin(timestamp);
+
 module.exports = mongoose.model('Meal', cookMealSchema);

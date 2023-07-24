@@ -8,11 +8,9 @@ const mongoose = require('mongoose');
 const configuration = require('./config');
 const {logger} = require('./Config/winston');
 const { verifyLocalToken } = require('./Authentication/verifyLocalToken');
-const { verifyLocalToken } = require('./Authentication/verifyLocalToken');
 const authenticationRoutes = require('./Routes/Routes');
 const addressRoute = require('./Routes/Address');
 const mealRoute = require('./Routes/Meal');
-require('./database');
 require('./database');
 
 dotenv.config();
@@ -26,6 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
 app.use('/auth', authenticationRoutes);
+
+app.use(verifyLocalToken);
+app.use('/', mealRoute);
 app.use('/address', addressRoute);
 
 app.use('/image', function (req, res) {
@@ -35,7 +36,6 @@ app.use('/image', function (req, res) {
     const collectionChunks = db.collection('Images.chunks');
 
     collection.find({filename: req.query.name}).toArray(function(err, docs){   
-        console.log(docs);     
         if(err){        
           return res.render('index', {
            title: 'File error', 
@@ -51,7 +51,6 @@ app.use('/image', function (req, res) {
        //Retrieving the chunks from the db          
        collectionChunks.find({files_id : docs[0]._id})
          .sort({n: 1}).toArray(function(err, chunks){   
-             console.log(chunks);
            if(err){            
               return res.render('index', {
                title: 'Download Error', 
