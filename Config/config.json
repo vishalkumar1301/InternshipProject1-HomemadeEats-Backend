@@ -1,5 +1,5 @@
 {
-    "mongoDbURL": "mongodb+srv://dabbawalaapplication:dabbawalaapplication@dabbawala.oembp.mongodb.net/DabbaWala?retryWrites=true&w=majority",
+    "mongoDbURL": "mongodb+srv://vishalkumar1301:Vishal@123@cluster0.xj4baqx.mongodb.net/?retryWrites=true&w=majority",
     "dBName": "DabbaWala",
     "jwtSecretKey": "TooSecretToShare",
     "dummy": "dummy"

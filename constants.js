@@ -44,7 +44,8 @@ class Constants {
         ValueShouldBeBreakfastLunchOrDinner: 'Value should be Breakfast lunch or dinner',
         ProvideJSONData: 'Provide stringify json data',
         InvalidToken: 'Invalid token',
-        DummyError: 'dummy error'
+        DummyError: 'dummy error',
+        InvalidOTP: 'Invalid OTP'
     };
     static SuccessMessages = {
         SignupSuccessfull: 'Signup Successfull',
@@ -52,12 +53,23 @@ class Constants {
         AddressAddedSuccessfully: 'Address added successfully',
         AddressAlreadyExists: 'Address already exists',
         ChangedDefaultAddress: 'Changed default address',
-        BreakfastAdded: 'Breakfast Added'
+        BreakfastAdded: 'Breakfast Added',
+        OrderPlacedSuccessfully: 'Order Placed Successfully',
+        OrderAcceptedByCook: 'Order accepted by cook',
+        OrderRejectedByCook: 'Order rejected by cook',
+        FcmTokenUpdated: 'Fcm Token Updated',
+        OrderIsPrepared: 'Order is prepared',
+        OtpIsValid: 'Otp is valid',
+        UpdatedUserDetails: 'Updated user details'
     };
     static AddressType = {
         Work: 'Work',
         Home: 'Home',
         Other: 'Other'
+    };
+    static UserType = {
+        Customer: 0,
+        Cook: 1
     }
 }
 

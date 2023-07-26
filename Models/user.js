@@ -33,6 +33,10 @@ let userSchema = new mongoose.Schema({
     token: {
         type: String
     },
+    fcmToken: {
+        type: String,
+        required: false
+    },
     addresses: [
         {
             state: {
@@ -81,7 +85,15 @@ let userSchema = new mongoose.Schema({
                 required: true
             }
         }
-    ]
+    ],
+    certificate_image: {
+        type: String,
+        required: false
+    },
+    is_verified: {
+        type: Boolean,
+        default: false
+    }
 });
 
 userSchema.plugin(timestamp);
