@@ -12,6 +12,7 @@ const UserService = require('../Service/UserService');
 const { JSONResponse } = require('../Constants/Response');
 const { storage } = require('../database');
 var upload = multer({ storage: storage })
+const User = require('../Models/user');
 
 require('../Authentication/auth')(passport);
 
@@ -25,11 +26,39 @@ authenticationRoute.post('/signup', upload.single('certificate'), SignUpValidati
     });
 });
 
+authenticationRoute.post('/verify/:userId', async (req, res, next) => {
+    const userId = req.params.userId;
+
+    // Find the user with the given userId and update is_verified to true
+    User.findByIdAndUpdate(
+        userId, 
+        { is_verified: true }, 
+        { new: true },  // This option returns the updated document
+        (err, user) => {
+            if (err) {
+                // Handle the error...
+                return res.status(500).json(new JSONResponse('An error occurred while verifying the user.').getJson());
+            }
+
+            if (!user) {
+                // If no user was found with the given userId...
+                return res.status(404).json(new JSONResponse('No user found with the given userId.').getJson());
+            }
+
+            // If the user was successfully verified...
+            return res.status(200).json(new JSONResponse(null, 'User successfully verified.').getJson());
+        }
+    );
+});
+
+
+
 authenticationRoute.post('/signin', SignInValidationRule, SignInValidationCheck, passport.authenticate('local', {session: false}), async (req, res, next) => {
     res.json({
         message: Constants.SuccessMessages.SigninSuccessfull,
         user: req.user
     });
 })
+
 
 module.exports = authenticationRoute;
