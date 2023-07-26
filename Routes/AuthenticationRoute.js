@@ -18,7 +18,7 @@ require('../Authentication/auth')(passport);
 
 authenticationRoute.post('/signup', upload.single('certificate'), SignUpValidationRule, SignUpValidationCheck, async (req, res, next) => {
 
-    return UserService.userSignUp(req.body.email, req.body.password, req.body.firstName, req.body.lastName, req.body.phoneNumber, req.body.userType, req.file.filename, function(error, success, statusCode) {
+    return UserService.userSignUp(req.body.email, req.body.password, req.body.firstName, req.body.lastName, req.body.phoneNumber, req.body.userType, req.file?.filename, function(error, success, statusCode) {
         if(error) {
             return res.status(statusCode).json(new JSONResponse().getJson(error));
         }
